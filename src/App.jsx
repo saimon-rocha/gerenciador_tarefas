@@ -11,7 +11,7 @@ function App() {
     const fetchTasks = async () => {
       try {
         const response = await axios.get(
-          "https://servercadastro-production.up.railway.app/tarefas/"
+          "https://servercadastro-production.up.railway.app"
         );
 
         if (response.status === 200) {
