@@ -10,7 +10,9 @@ function App() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("https://servercadastro-production.up.railway.app/tarefas/");
+        const response = await axios.get(
+          "https://servercadastro-production.up.railway.app/tarefas/"
+        );
         setTasks(response.data); // Atualiza o estado com as tarefas do backend
       } catch (error) {
         console.error("Erro ao buscar tarefas:", error);
@@ -21,29 +23,25 @@ function App() {
   }, []);
 
   /* 🔹 Alternar status da tarefa (Completa/Pendente) */
-  const onTaskClick = async (taskId) => {
-    const taskToUpdate = tasks.find((task) => task.id === taskId);
-    if (!taskToUpdate) return;
-
-    try {
-      const updatedTask = {
-        ...taskToUpdate,
-        isCompleted: !taskToUpdate.isCompleted,
-      };
-
-      await axios.put(`https://servercadastro-production.up.railway.app/tarefas/${taskId}`, updatedTask);
-
-      // Atualiza o estado localmente após sucesso na API
-      setTasks(tasks.map((task) => (task.id === taskId ? updatedTask : task)));
-    } catch (error) {
-      console.error("Erro ao atualizar tarefa:", error);
-    }
-  };
+  function onTaskClick(taskId) {
+    const newTasks = tasks.map((task) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          isCompleted: !task.isCompleted,
+        };
+      }
+      return task;
+    });
+    setTasks(newTasks);
+  }
 
   /* 🔹 Excluir tarefa */
   const onDeleteTaskClick = async (taskId) => {
     try {
-      await axios.delete(`https://servercadastro-production.up.railway.app/tarefas/deletar/${taskId}`);
+      await axios.delete(
+        `https://servercadastro-production.up.railway.app/tarefas/deletar/${taskId}`
+      );
 
       // Atualiza a lista localmente após exclusão na API
       setTasks(tasks.filter((task) => task.id !== taskId));
@@ -68,7 +66,9 @@ function App() {
       console.log("Resposta da API:", response.data); // Verifica a resposta da API
 
       // Após adicionar a tarefa, faça uma nova requisição para pegar as tarefas mais recentes
-      const updatedTasks = await axios.get("https://servercadastro-production.up.railway.app/tarefas/");
+      const updatedTasks = await axios.get(
+        "https://servercadastro-production.up.railway.app/tarefas/"
+      );
 
       // Atualiza o estado com as tarefas mais recentes
       setTasks(updatedTasks.data);
