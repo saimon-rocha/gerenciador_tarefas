@@ -1,59 +1,81 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import Tasks from "./components/Tasks";
 import AddTask from "./components/AddTask";
 
 function App() {
-  const [tasks, setTasks] = useState(() => {
-    return JSON.parse(localStorage.getItem("tasks")) || [];
-  });
+  const [tasks, setTasks] = useState([]);
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
+  /* 🔹 Buscar tarefas da API */
   useEffect(() => {
     const fetchTasks = async () => {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/todos?limit=10",
+      try {
+        const response = await axios.get("http://localhost:3000/tarefas/");
+        setTasks(response.data); // Atualiza o estado com as tarefas do backend
+      } catch (error) {
+        console.error("Erro ao buscar tarefas:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  /* 🔹 Alternar status da tarefa (Completa/Pendente) */
+  const onTaskClick = async (taskId) => {
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+    if (!taskToUpdate) return;
+
+    try {
+      const updatedTask = {
+        ...taskToUpdate,
+        isCompleted: !taskToUpdate.isCompleted,
+      };
+
+      await axios.put(`http://localhost:3000/tarefas/${taskId}`, updatedTask);
+
+      // Atualiza o estado localmente após sucesso na API
+      setTasks(tasks.map((task) => (task.id === taskId ? updatedTask : task)));
+    } catch (error) {
+      console.error("Erro ao atualizar tarefa:", error);
+    }
+  };
+
+  /* 🔹 Excluir tarefa */
+  const onDeleteTaskClick = async (taskId) => {
+    try {
+      await axios.delete(`http://localhost:3000/tarefas/deletar/${taskId}`);
+
+      // Atualiza a lista localmente após exclusão na API
+      setTasks(tasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error("Erro ao excluir tarefa:", error);
+    }
+  };
+
+  /* 🔹 Adicionar nova tarefa */
+  const onAddTaskSubmit = async (title, description) => {
+    try {
+      // Adiciona a nova tarefa
+      const response = await axios.post(
+        "http://localhost:3000/tarefas/cadastrar",
         {
-          method: "GET",
+          title,
+          description,
+          isCompleted: false, // Sempre inicia como pendente
         }
       );
 
-      const data = await response.json();
-      setTasks(data);
-    };
-    // Pode ser usado uma api para pegar as tarefas
-    //fetchTasks();
-  }, []);
+      console.log("Resposta da API:", response.data); // Verifica a resposta da API
 
-  function onTaskClick(taskId) {
-    const newTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        return {
-          ...task,
-          isCompleted: !task.isCompleted,
-        };
-      }
-      return task;
-    });
-    setTasks(newTasks);
-  }
+      // Após adicionar a tarefa, faça uma nova requisição para pegar as tarefas mais recentes
+      const updatedTasks = await axios.get("http://localhost:3000/tarefas/");
 
-  function onDeleteTaskClick(taskId) {
-    const newTasks = tasks.filter((task) => task.id !== taskId);
-    setTasks(newTasks);
-  }
-
-  function onAddTaskSubmit(title, description) {
-    const newTask = {
-      id: tasks.length + 1,
-      title,
-      description,
-      isCompleted: false,
-    };
-    setTasks([...tasks, newTask]);
-  }
+      // Atualiza o estado com as tarefas mais recentes
+      setTasks(updatedTasks.data);
+    } catch (error) {
+      console.error("Erro ao adicionar tarefa:", error);
+    }
+  };
 
   return (
     <div className="w-screen h-screen bg-slate-500 flex justify-center p-6">
@@ -71,4 +93,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
