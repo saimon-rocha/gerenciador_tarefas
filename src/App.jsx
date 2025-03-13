@@ -6,7 +6,7 @@ import AddTask from "./components/AddTask";
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  /* 🔹 Buscar tarefas da API */
+  /* Buscar tarefas da API */
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -14,6 +14,7 @@ function App() {
           "https://servercadastro-production.up.railway.app/tarefas/"
         );
         setTasks(response.data); // Atualiza o estado com as tarefas do backend
+        console.log("Resposta da API:", response.data); // Verifica a resposta da API
       } catch (error) {
         console.error("Erro ao buscar tarefas:", error);
       }
@@ -22,7 +23,7 @@ function App() {
     fetchTasks();
   }, []);
 
-  /* 🔹 Alternar status da tarefa (Completa/Pendente) */
+  /* Alternar status da tarefa (Completa/Pendente) */
   function onTaskClick(taskId) {
     const newTasks = tasks.map((task) => {
       if (task.id === taskId) {
@@ -36,7 +37,7 @@ function App() {
     setTasks(newTasks);
   }
 
-  /* 🔹 Excluir tarefa */
+  /* Excluir tarefa */
   const onDeleteTaskClick = async (taskId) => {
     try {
       await axios.delete(
@@ -45,12 +46,13 @@ function App() {
 
       // Atualiza a lista localmente após exclusão na API
       setTasks(tasks.filter((task) => task.id !== taskId));
+      console.log("Resposta da API:", response.data); // Verifica a resposta da API
     } catch (error) {
       console.error("Erro ao excluir tarefa:", error);
     }
   };
 
-  /* 🔹 Adicionar nova tarefa */
+  /* Adicionar nova tarefa */
   const onAddTaskSubmit = async (title, description) => {
     try {
       // Adiciona a nova tarefa
@@ -62,14 +64,11 @@ function App() {
           isCompleted: false, // Sempre inicia como pendente
         }
       );
-
       console.log("Resposta da API:", response.data); // Verifica a resposta da API
-
       // Após adicionar a tarefa, faça uma nova requisição para pegar as tarefas mais recentes
       const updatedTasks = await axios.get(
         "https://servercadastro-production.up.railway.app/tarefas/"
       );
-
       // Atualiza o estado com as tarefas mais recentes
       setTasks(updatedTasks.data);
     } catch (error) {
