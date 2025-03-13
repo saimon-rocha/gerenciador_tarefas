@@ -13,9 +13,17 @@ function App() {
         const response = await axios.get(
           "https://servercadastro-production.up.railway.app/tarefas/"
         );
-        setTasks(response.data); // Atualiza o estado com as tarefas do backend
+        if (response.status === 200 && Array.isArray(response.data)) {
+          setTasks(response.data);
+        } else {
+          setTasks([]);
+        }
       } catch (error) {
-        console.error("Erro ao buscar tarefas:", error);
+        console.error(
+          "Erro ao buscar tarefas:",
+          error.response?.data || error.message
+        );
+        setTasks([]); // Garante que o estado não quebre caso a API falhe
       }
     };
 
