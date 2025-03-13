@@ -14,7 +14,6 @@ function App() {
           "https://servercadastro-production.up.railway.app/tarefas/"
         );
         setTasks(response.data); // Atualiza o estado com as tarefas do backend
-        console.log("Resposta da API:", response.data); // Verifica a resposta da API
       } catch (error) {
         console.error("Erro ao buscar tarefas:", error);
       }
@@ -46,7 +45,6 @@ function App() {
 
       // Atualiza a lista localmente após exclusão na API
       setTasks(tasks.filter((task) => task.id !== taskId));
-      console.log("Resposta da API:", response.data); // Verifica a resposta da API
     } catch (error) {
       console.error("Erro ao excluir tarefa:", error);
     }
@@ -64,8 +62,7 @@ function App() {
           isCompleted: false, // Sempre inicia como pendente
         }
       );
-      console.log("Resposta da API:", response.data); // Verifica a resposta da API
-      // Após adicionar a tarefa, faça uma nova requisição para pegar as tarefas mais recentes
+      // Após adicionar a tarefa, faz uma nova requisição para pegar as tarefas mais recentes
       const updatedTasks = await axios.get(
         "https://servercadastro-production.up.railway.app/tarefas/"
       );
