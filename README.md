@@ -1,5 +1,9 @@
-Conceitos Básicos com React
-Componentes, Botão, Titulo, Input, Adicionar Tarefas
-One Page e personalização
+# Gerenciador de Tarefas
+Sistema Criado em React para cadastrar uma ou mais tarefas.
 
-Está consumindo a API server_cadastro
+# Funcionalidades
+Titulo e Descrição são salvos no banco.
+
+Botão de Cadastrar, Concluir "somente risca a tarefa mas sem nenhuma função adicional", Ver tarefa completa e excluir.
+
+Sistema está conectado com Back-End em Node.js.
