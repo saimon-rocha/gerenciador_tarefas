@@ -10,7 +10,9 @@ function App() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await axios.get("http://192.168.1.6:3000/tarefas/");
+        const response = await axios.get(
+          "https://servercadastro-production.up.railway.app/tarefas/"
+        );
         if (response.status === 200 && Array.isArray(response.data)) {
           setTasks(response.data);
         } else {
